@@ -1,0 +1,33 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  isAdmin   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  scans     Scan[]
+}
+
+model Scan {
+  id            String   @id @default(uuid())
+  imageUrl      String
+  diseaseName   String
+  confidence    Float
+  symptoms      String // JSON stringified array
+  causes        String // JSON stringified array
+  precautions   String // JSON stringified array
+  treatment     String
+  aiExplanation String
+  createdAt     DateTime @default(now())
+  
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

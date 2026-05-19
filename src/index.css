@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui;
+  
+  --radius-3xl: 1.5rem;
+  --radius-4xl: 2rem;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 antialiased text-slate-900 font-sans;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-white/70 backdrop-blur-md border border-white/20;
+  }
+}
+
+@media print {
+  aside, header, footer, .print-hidden, .print\:hidden {
+    display: none !important;
+  }
+  .pl-64 {
+    padding-left: 0 !important;
+  }
+  main {
+    padding: 0 !important;
+    background: white !important;
+  }
+  body, html {
+    background: white !important;
+  }
+  /* Ensure modal content prints correctly if open */
+  .fixed.inset-0 {
+    position: relative !important;
+    z-index: auto !important;
+    background: none !important;
+    padding: 0 !important;
+    display: block !important;
+  }
+  .fixed.inset-0 .absolute.inset-0 {
+    display: none !important; /* Backdrop */
+  }
+  .fixed.inset-0 .relative.bg-white {
+    position: relative !important;
+    box-shadow: none !important;
+    max-height: none !important;
+    overflow: visible !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+  .fixed.inset-0 button {
+    display: none !important; /* Close and other buttons */
+  }
+}
+
+

@@ -1,0 +1,21 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+
+# Prisma
+prisma/dev.db
+prisma/dev.db-journal
+/src/generated/prisma
+*.db
+
+# Firebase (no longer used)
+firebase-applet-config.json
+firebase-blueprint.json
+firestore.rules
+metadata.json
+*.db
