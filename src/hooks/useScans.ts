@@ -37,5 +37,21 @@ export function useScans(maxResults?: number) {
     return () => clearInterval(interval);
   }, [user, maxResults]);
 
-  return { scans, loading };
+  const addScan = async (scan: ScanResult) => {
+    try {
+      const res = await fetch('/api/scans', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(scan),
+      });
+      if (res.ok) {
+        const saved = await res.json();
+        setScans(prev => [saved, ...prev]);
+      }
+    } catch (err) {
+      console.error("Failed to save scan", err);
+    }
+  };
+
+  return { scans, loading, addScan };
 }

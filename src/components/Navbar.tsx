@@ -18,7 +18,7 @@ export default function Navbar() {
         
         <div className="h-8 w-[1px] bg-slate-200 dark:bg-slate-700"></div>
 
-        <div className="flex items-center gap-3">
+        <Link to="/settings" className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer">
           <div className="text-right hidden sm:block">
             <p className="text-xs font-medium text-slate-900 dark:text-white">{user?.email?.split('@')[0] || 'User'}</p>
             <p className="text-[10px] text-slate-400 dark:text-slate-500">{user?.isAdmin ? 'Administrator' : 'Patient'}</p>
@@ -26,7 +26,7 @@ export default function Navbar() {
           <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 font-bold text-xs">
             {user?.email?.charAt(0).toUpperCase() || 'U'}
           </div>
-        </div>
+        </Link>
       </div>
     </header>
   );

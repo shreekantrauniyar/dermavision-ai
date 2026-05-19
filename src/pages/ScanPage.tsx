@@ -5,7 +5,8 @@ import {
   FileText, Info, ChevronRight
 } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { useScans, type ScanResult } from '../hooks/useScans';
+import { useScans } from '../hooks/useScans';
+import type { ScanResult } from '../types';
 
 export default function ScanPage() {
   const [image, setImage] = useState<string | null>(null);
@@ -59,6 +60,13 @@ export default function ScanPage() {
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">New Diagnostic Scan</h1>
         <p className="text-gray-500 dark:text-gray-400 mt-2">Upload a clear photo of the affected skin area for instant AI analysis.</p>
       </div>
+
+      {error && (
+        <div className="mb-4 p-4 bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 rounded-xl flex items-center gap-2 print:hidden">
+          <AlertCircle size={20} />
+          {error}
+        </div>
+      )}
 
       {!result ? (
         <motion.div 
@@ -142,12 +150,6 @@ export default function ScanPage() {
         <AnalysisResult result={result} onReset={() => setResult(null)} />
       )}
 
-      {error && (
-        <div className="mt-4 p-4 bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 rounded-xl flex items-center gap-2">
-          <AlertCircle size={20} />
-          {error}
-        </div>
-      )}
     </div>
   );
 }
