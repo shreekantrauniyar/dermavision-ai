@@ -159,7 +159,7 @@ export default function SettingsPage() {
                 value={deleteConfirm}
                 onChange={(e) => setDeleteConfirm(e.target.value)}
                 placeholder='Type "DELETE" to confirm'
-                className="flex-1 px-4 py-2.5 bg-white dark:bg-slate-800 border border-rose-200 dark:border-rose-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+                className="flex-1 px-4 py-2.5 bg-white dark:bg-slate-800 border border-rose-200 dark:border-rose-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-rose-500 dark:text-white dark:placeholder-slate-400 text-slate-900"
               />
               <button 
                 onClick={handleDeleteAccount}

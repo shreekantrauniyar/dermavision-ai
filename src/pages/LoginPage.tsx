@@ -35,10 +35,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-6 relative overflow-hidden transition-colors duration-300">
       {/* Background blobs */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-100 rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2"></div>
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-50 rounded-full blur-3xl -z-10 -translate-x-1/2 translate-y-1/2"></div>
+      <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-100 dark:bg-indigo-950/50 rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-50 dark:bg-indigo-950/30 rounded-full blur-3xl -z-10 -translate-x-1/2 translate-y-1/2"></div>
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -46,19 +46,19 @@ export default function LoginPage() {
         className="max-w-md w-full"
       >
         <div className="text-center mb-10">
-          <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white mx-auto shadow-xl shadow-indigo-200 mb-6 font-bold text-2xl">
+          <div className="w-16 h-16 bg-indigo-600 rounded-2xl flex items-center justify-center text-white mx-auto shadow-xl shadow-indigo-200 dark:shadow-none mb-6 font-bold text-2xl">
             DV
           </div>
-          <h1 className="text-4xl font-bold text-slate-900 tracking-tight mb-3">DermaVision AI</h1>
-          <p className="text-slate-500 font-medium leading-relaxed">
+          <h1 className="text-4xl font-bold text-slate-900 dark:text-white tracking-tight mb-3">DermaVision AI</h1>
+          <p className="text-slate-500 dark:text-slate-400 font-medium leading-relaxed">
             Revolutionizing skin health with precision AI diagnostics and personalized care.
           </p>
         </div>
 
-        <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-xl space-y-6">
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl space-y-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Email Address</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Email Address</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Mail className="h-5 w-5 text-slate-400" />
@@ -67,7 +67,7 @@ export default function LoginPage() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm"
+                  className="pl-10 w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm dark:text-white dark:placeholder-slate-500"
                   placeholder="you@example.com"
                   required
                 />
@@ -75,7 +75,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">Password</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">Password</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-slate-400" />
@@ -84,7 +84,7 @@ export default function LoginPage() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 w-full p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm"
+                  className="pl-10 w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-sm dark:text-white dark:placeholder-slate-500"
                   placeholder="••••••••"
                   required
                 />
@@ -94,7 +94,7 @@ export default function LoginPage() {
             <button 
               type="submit"
               disabled={signingIn}
-              className="w-full flex items-center justify-center gap-2 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all font-semibold shadow-md shadow-indigo-100 disabled:opacity-70 disabled:cursor-not-allowed mt-2"
+              className="w-full flex items-center justify-center gap-2 py-3 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-all font-semibold shadow-md shadow-indigo-100 dark:shadow-none disabled:opacity-70 disabled:cursor-not-allowed mt-2"
             >
               {signingIn ? (
                 <Loader2 className="animate-spin" size={18} />
@@ -106,7 +106,7 @@ export default function LoginPage() {
           </form>
 
           {error && (
-            <div className="bg-rose-50 text-rose-600 p-3 rounded-lg text-xs font-semibold text-center border border-rose-100">
+            <div className="bg-rose-50 dark:bg-rose-950/30 text-rose-600 dark:text-rose-400 p-3 rounded-lg text-xs font-semibold text-center border border-rose-100 dark:border-rose-900/50">
               {error}
             </div>
           )}
@@ -115,7 +115,7 @@ export default function LoginPage() {
             <button
               type="button"
               onClick={() => { setIsSignUp(!isSignUp); setError(null); }}
-              className="text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors"
+              className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors"
             >
               {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
             </button>
@@ -123,26 +123,26 @@ export default function LoginPage() {
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-100"></div>
+              <div className="w-full border-t border-gray-100 dark:border-slate-800"></div>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-4 text-gray-400 font-bold tracking-widest leading-none py-1">Security Promise</span>
+              <span className="bg-white dark:bg-slate-900 px-4 text-gray-400 dark:text-slate-500 font-bold tracking-widest leading-none py-1">Security Promise</span>
             </div>
           </div>
 
           <div className="space-y-3">
-            <div className="flex items-center gap-3 text-xs text-gray-500 font-medium">
+            <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-slate-400 font-medium">
               <div className="h-1.5 w-1.5 bg-indigo-500 rounded-full"></div>
               <span>End-to-end encrypted medical records</span>
             </div>
-            <div className="flex items-center gap-3 text-xs text-gray-500 font-medium">
+            <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-slate-400 font-medium">
               <div className="h-1.5 w-1.5 bg-indigo-500 rounded-full"></div>
               <span>HIPAA compliant data storage</span>
             </div>
           </div>
         </div>
 
-        <p className="text-center text-xs text-gray-400 mt-8 leading-relaxed max-w-sm mx-auto">
+        <p className="text-center text-xs text-gray-400 dark:text-slate-500 mt-8 leading-relaxed max-w-sm mx-auto">
           By signing in you agree to our Terms of Service and Privacy Policy. 
           DermaVision is an AI assistant, not a substitute for clinical judgment.
         </p>

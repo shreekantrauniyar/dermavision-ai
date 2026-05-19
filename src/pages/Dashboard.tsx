@@ -35,10 +35,10 @@ export default function Dashboard() {
   const prevalenceData = React.useMemo(() => {
     if (scans.length === 0) {
       return [
-        { name: 'Acne Vulgaris', val: 0, color: 'bg-slate-200' },
-        { name: 'Eczema', val: 0, color: 'bg-slate-200' },
-        { name: 'Psoriasis', val: 0, color: 'bg-slate-200' },
-        { name: 'Others', val: 0, color: 'bg-slate-200' },
+        { name: 'Acne Vulgaris', val: 0, color: 'bg-slate-200 dark:bg-slate-700' },
+        { name: 'Eczema', val: 0, color: 'bg-slate-200 dark:bg-slate-700' },
+        { name: 'Psoriasis', val: 0, color: 'bg-slate-200 dark:bg-slate-700' },
+        { name: 'Others', val: 0, color: 'bg-slate-200 dark:bg-slate-700' },
       ];
     }
 
@@ -68,22 +68,22 @@ export default function Dashboard() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="col-span-8 row-span-2 bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-center relative overflow-hidden group shadow-sm hover:shadow-md transition-all"
+        className="col-span-8 row-span-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 flex flex-col justify-center relative overflow-hidden group shadow-sm hover:shadow-md transition-all"
       >
         <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform">
           <Activity size={120} />
         </div>
         <div className="relative z-10 flex items-center justify-between">
           <div>
-            <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Instant Analysis</h3>
-            <h2 className="text-2xl font-bold text-slate-900 mb-4">Start a new skin check</h2>
-            <Link to="/scan" className="inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">
+            <h3 className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Instant Analysis</h3>
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Start a new skin check</h2>
+            <Link to="/scan" className="inline-flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold shadow-lg shadow-indigo-100 dark:shadow-none hover:bg-indigo-700 transition-all">
               <PlusCircle size={18} />
               New Scan
             </Link>
           </div>
-          <div className="hidden md:block w-48 h-32 bg-indigo-50 rounded-xl border border-indigo-100 flex items-center justify-center">
-            <Upload className="text-indigo-600 opacity-20" size={48} />
+          <div className="hidden md:block w-48 h-32 bg-indigo-50 dark:bg-indigo-950/50 rounded-xl border border-indigo-100 dark:border-indigo-900 flex items-center justify-center">
+            <Upload className="text-indigo-600 dark:text-indigo-400 opacity-20" size={48} />
           </div>
         </div>
       </motion.div>
@@ -93,7 +93,7 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="col-span-4 row-span-2 bg-indigo-600 rounded-2xl text-white p-6 flex flex-col justify-between shadow-lg shadow-indigo-200"
+        className="col-span-4 row-span-2 bg-indigo-600 rounded-2xl text-white p-6 flex flex-col justify-between shadow-lg shadow-indigo-200 dark:shadow-none"
       >
         <div>
           <h3 className="text-xs font-semibold uppercase opacity-70 tracking-widest">Health Insights</h3>
@@ -142,26 +142,26 @@ export default function Dashboard() {
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.2 }}
-        className="col-span-5 row-span-4 bg-white rounded-2xl border border-slate-200 p-6 flex flex-col shadow-sm"
+        className="col-span-5 row-span-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 flex flex-col shadow-sm"
       >
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-sm font-semibold text-slate-800">Latest Result</h3>
-          <span className="px-2 py-0.5 bg-emerald-50 text-emerald-600 text-[10px] font-bold rounded uppercase tracking-tighter">Processed</span>
+          <h3 className="text-sm font-semibold text-slate-800 dark:text-white">Latest Result</h3>
+          <span className="px-2 py-0.5 bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold rounded uppercase tracking-tighter">Processed</span>
         </div>
         
         {latestScan ? (
           <>
             <div className="flex gap-4 mb-6">
-              <img src={latestScan.imageUrl} className="w-24 h-24 bg-slate-100 rounded-lg border border-slate-200 object-cover" alt="Scan" />
+              <img src={latestScan.imageUrl} className="w-24 h-24 bg-slate-100 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 object-cover" alt="Scan" />
               <div className="flex-1">
-                <p className="text-[10px] text-slate-500 font-bold uppercase">Detected Condition</p>
-                <h4 className="text-xl font-bold text-indigo-700 leading-tight truncate">{latestScan.diseaseName}</h4>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase">Detected Condition</p>
+                <h4 className="text-xl font-bold text-indigo-700 dark:text-indigo-400 leading-tight truncate">{latestScan.diseaseName}</h4>
                 <div className="flex items-center gap-2 mt-1">
                   <div className={cn(
                     "w-3 h-3 rounded-full",
                     latestScan.confidence > 0.8 ? "bg-emerald-500" : "bg-amber-500"
                   )}></div>
-                  <span className="text-xs font-semibold">{(latestScan.confidence * 100).toFixed(1)}% Match</span>
+                  <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">{(latestScan.confidence * 100).toFixed(1)}% Match</span>
                 </div>
               </div>
             </div>
@@ -170,7 +170,7 @@ export default function Dashboard() {
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Top Precautions</p>
                 <div className="space-y-1.5 mt-1">
                   {latestScan.precautions.slice(0, 2).map((p, i) => (
-                    <div key={i} className="flex gap-2 text-xs text-slate-600">
+                    <div key={i} className="flex gap-2 text-xs text-slate-600 dark:text-slate-300">
                       <div className="w-1.5 h-1.5 bg-indigo-400 rounded-full mt-1.5 shrink-0"></div>
                       {p}
                     </div>
@@ -178,31 +178,31 @@ export default function Dashboard() {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-100 overflow-hidden">
+                <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700 overflow-hidden">
                   <p className="text-[9px] font-bold text-slate-400 uppercase">Treatment</p>
-                  <p className="text-[11px] font-medium text-slate-700 truncate">{latestScan.treatment}</p>
+                  <p className="text-[11px] font-medium text-slate-700 dark:text-slate-300 truncate">{latestScan.treatment}</p>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-100 dark:border-slate-700">
                   <p className="text-[9px] font-bold text-slate-400 uppercase">Risk Level</p>
                   <p className={cn(
                     "text-[11px] font-medium",
-                    latestScan.confidence > 0.8 ? "text-emerald-600" : "text-amber-600"
+                    latestScan.confidence > 0.8 ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"
                   )}>
                     {latestScan.confidence > 0.8 ? 'Low' : 'Moderate'}
                   </p>
                 </div>
               </div>
             </div>
-            <Link to="/history" className="mt-4 w-full py-2.5 bg-slate-900 text-white text-[11px] font-bold rounded-lg text-center hover:bg-black transition-colors">
+            <Link to="/history" className="mt-4 w-full py-2.5 bg-slate-900 dark:bg-indigo-600 text-white text-[11px] font-bold rounded-lg text-center hover:bg-black dark:hover:bg-indigo-700 transition-colors">
               View Detailed Report
             </Link>
           </>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-            <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 mb-4">
+            <div className="w-16 h-16 bg-slate-50 dark:bg-slate-800 rounded-2xl flex items-center justify-center text-slate-300 dark:text-slate-600 mb-4">
               <Activity size={32} />
             </div>
-            <p className="text-sm font-medium text-slate-400">No scans yet. Your latest results will appear here.</p>
+            <p className="text-sm font-medium text-slate-400 dark:text-slate-500">No scans yet. Your latest results will appear here.</p>
           </div>
         )}
       </motion.div>
@@ -212,13 +212,13 @@ export default function Dashboard() {
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.3 }}
-        className="col-span-7 row-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm"
+        className="col-span-7 row-span-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 shadow-sm"
       >
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-slate-800">Confidence Trends</h3>
+          <h3 className="text-sm font-semibold text-slate-800 dark:text-white">Confidence Trends</h3>
           <div className="flex gap-1.5">
             <span className="w-2.5 h-2.5 bg-indigo-600 rounded-full"></span>
-            <span className="w-2.5 h-2.5 bg-slate-200 rounded-full"></span>
+            <span className="w-2.5 h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full"></span>
           </div>
         </div>
         <div className="h-32 w-full">
@@ -236,8 +236,8 @@ export default function Dashboard() {
               </AreaChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-full bg-slate-50 rounded-xl flex items-center justify-center">
-              <TrendingUp className="text-slate-200" size={32} />
+            <div className="h-full bg-slate-50 dark:bg-slate-800 rounded-xl flex items-center justify-center">
+              <TrendingUp className="text-slate-200 dark:text-slate-600" size={32} />
             </div>
           )}
         </div>
@@ -248,15 +248,15 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="col-span-4 row-span-2 bg-white rounded-2xl border border-slate-200 p-6 flex flex-col shadow-sm"
+        className="col-span-4 row-span-2 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-6 flex flex-col shadow-sm"
       >
-        <h3 className="text-sm font-semibold text-slate-800 mb-4">Diagnosis Prevalence</h3>
+        <h3 className="text-sm font-semibold text-slate-800 dark:text-white mb-4">Diagnosis Prevalence</h3>
         <div className="space-y-3 flex-1 overflow-y-auto pr-2">
           {prevalenceData.map((item, i) => (
             <div key={i} className="flex items-center gap-3">
               <div className={cn("w-2 h-2 rounded-full", item.color)}></div>
-              <span className="text-[11px] text-slate-600 flex-1 truncate">{item.name}</span>
-              <span className="text-[11px] font-bold text-slate-900">{item.val}%</span>
+              <span className="text-[11px] text-slate-600 dark:text-slate-300 flex-1 truncate">{item.name}</span>
+              <span className="text-[11px] font-bold text-slate-900 dark:text-white">{item.val}%</span>
             </div>
           ))}
         </div>
@@ -267,7 +267,7 @@ export default function Dashboard() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.5 }}
-        className="col-span-3 row-span-2 bg-slate-900 rounded-2xl p-5 flex flex-col text-white shadow-xl shadow-slate-200"
+        className="col-span-3 row-span-2 bg-slate-900 rounded-2xl p-5 flex flex-col text-white shadow-xl shadow-slate-200 dark:shadow-none"
       >
         <div className="flex items-center gap-2 mb-3">
           <div className="w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center">

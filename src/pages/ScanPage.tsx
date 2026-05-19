@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react';
-import { Upload, Camera, AlertCircle, CheckCircle2, ChevronRight, Info, FileText } from 'lucide-react';
-import axios from 'axios';
-import { motion, AnimatePresence } from 'motion/react';
-import { cn, compressImage } from '../lib/utils';
-import { ScanResult } from '../types';
-import { useAuth } from '../hooks/useAuth';
+import { motion } from 'motion/react';
+import { 
+  Camera, Upload, CheckCircle2, AlertCircle, 
+  FileText, Info, ChevronRight
+} from 'lucide-react';
+import { cn } from '../lib/utils';
+import { useScans, type ScanResult } from '../hooks/useScans';
 
 export default function ScanPage() {
   const [image, setImage] = useState<string | null>(null);
@@ -12,90 +13,63 @@ export default function ScanPage() {
   const [result, setResult] = useState<ScanResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { user } = useAuth();
+  const { addScan } = useScans();
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setImage(reader.result as string);
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      setImage(ev.target?.result as string);
+      setResult(null);
+      setError(null);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleAnalyze = async () => {
     if (!image) return;
     setAnalyzing(true);
     setError(null);
-
     try {
-      // Compress image before analysis
-      const compressedImage = await compressImage(image);
-      
-      const res = await axios.post('/api/analyze-skin', { image: compressedImage });
-      const data = res.data;
-
-      // Save to Database
-      const newScanData = {
-        imageUrl: compressedImage,
-        diseaseName: data.diseaseName || "Unevaluated Condition",
-        confidence: typeof data.confidence === 'number' ? data.confidence : 0,
-        symptoms: Array.isArray(data.symptoms) ? data.symptoms : [],
-        causes: Array.isArray(data.causes) ? data.causes : [],
-        precautions: Array.isArray(data.precautions) ? data.precautions : [],
-        treatment: data.treatment || "Consult a professional.",
-        aiExplanation: data.aiExplanation || "Analysis complete.",
+      const res = await fetch('/api/analyze-skin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image }),
+      });
+      if (!res.ok) throw new Error('Analysis failed');
+      const data = await res.json();
+      const scanResult: ScanResult = {
+        ...data,
+        imageUrl: image,
+        createdAt: new Date().toISOString(),
       };
-
-      try {
-        const res = await fetch('/api/scans', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newScanData)
-        });
-        if (res.ok) {
-          const savedScan = await res.json();
-          setResult(savedScan);
-        } else {
-          throw new Error("Failed to save scan to database");
-        }
-      } catch (err) {
-        console.error(err);
-        setResult({ id: new Date().getTime().toString(), createdAt: new Date().toISOString(), ...newScanData } as any);
-      }
+      setResult(scanResult);
+      await addScan(scanResult);
     } catch (err: any) {
-      console.error(err);
-      let serverError = "Failed to analyze image. Please try again with a clearer photo.";
-      
-      if (err.response?.status === 503) {
-        serverError = "The AI is currently at capacity due to high demand. Please wait 10-20 seconds and try again.";
-      } else if (err.response?.data?.error) {
-        serverError = err.response.data.error;
-      }
-      
-      setError(serverError);
+      setError(err.message || 'Failed to analyze. Please try again.');
     } finally {
       setAnalyzing(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto pb-12">
       <div className="mb-8 print:hidden">
-        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">New Diagnostic Scan</h1>
-        <p className="text-gray-500 mt-2">Upload a clear photo of the affected skin area for instant AI analysis.</p>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">New Diagnostic Scan</h1>
+        <p className="text-gray-500 dark:text-gray-400 mt-2">Upload a clear photo of the affected skin area for instant AI analysis.</p>
       </div>
 
       {!result ? (
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden"
+          className="bg-white dark:bg-slate-900 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm overflow-hidden"
         >
           <div 
             className={cn(
-              "p-12 flex flex-col items-center justify-center border-b border-gray-50 transition-colors",
-              image ? "bg-blue-50/30" : "bg-white"
+              "p-12 flex flex-col items-center justify-center border-b border-gray-50 dark:border-slate-800 transition-colors",
+              image ? "bg-indigo-50/30 dark:bg-indigo-950/20" : "bg-white dark:bg-slate-900"
             )}
           >
             {image ? (
@@ -103,7 +77,7 @@ export default function ScanPage() {
                 <img src={image} alt="Upload" className="w-64 h-64 object-cover rounded-2xl shadow-lg" />
                 <button 
                   onClick={() => setImage(null)}
-                  className="absolute -top-3 -right-3 bg-white text-gray-900 w-8 h-8 rounded-full shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute -top-3 -right-3 bg-white dark:bg-slate-800 text-gray-900 dark:text-white w-8 h-8 rounded-full shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   &times;
                 </button>
@@ -111,18 +85,18 @@ export default function ScanPage() {
             ) : (
               <div 
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full h-64 border-2 border-dashed border-gray-200 rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 transition-all group"
+                className="w-full h-64 border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-3xl flex flex-col items-center justify-center cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-indigo-950/20 transition-all group"
               >
-                <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Upload size={32} />
                 </div>
-                <p className="text-gray-900 font-semibold text-lg">Click to upload or drag & drop</p>
-                <p className="text-gray-400 mt-1">PNG, JPG or JPEG (max 10MB)</p>
+                <p className="text-gray-900 dark:text-white font-semibold text-lg">Click to upload or drag & drop</p>
+                <p className="text-gray-400 dark:text-slate-500 mt-1">PNG, JPG or JPEG (max 10MB)</p>
               </div>
             )}
             <input 
+              ref={fileInputRef}
               type="file" 
-              ref={fileInputRef} 
               className="hidden" 
               accept="image/*" 
               onChange={handleFileUpload} 
@@ -130,14 +104,14 @@ export default function ScanPage() {
           </div>
 
           <div className="p-8 flex items-center justify-between">
-            <div className="flex items-center gap-4 text-sm text-gray-500">
+            <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-slate-400">
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 size={16} className="text-green-500" />
                 <span>AI processing active</span>
               </div>
-              <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
+              <div className="w-1 h-1 bg-gray-300 dark:bg-slate-600 rounded-full"></div>
               <div className="flex items-center gap-1.5">
-                <AlertCircle size={16} className="text-blue-500" />
+                <AlertCircle size={16} className="text-indigo-500" />
                 <span>HIPAA Compliant</span>
               </div>
             </div>
@@ -147,7 +121,7 @@ export default function ScanPage() {
               onClick={handleAnalyze}
               className={cn(
                 "px-8 py-3 rounded-xl font-semibold transition-all flex items-center gap-2",
-                image && !analyzing ? "bg-blue-600 text-white shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95" : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                image && !analyzing ? "bg-indigo-600 text-white shadow-lg shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 active:scale-95" : "bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-600 cursor-not-allowed"
               )}
             >
               {analyzing ? (
@@ -169,7 +143,7 @@ export default function ScanPage() {
       )}
 
       {error && (
-        <div className="mt-4 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl flex items-center gap-2">
+        <div className="mt-4 p-4 bg-rose-50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 rounded-xl flex items-center gap-2">
           <AlertCircle size={20} />
           {error}
         </div>
@@ -203,52 +177,52 @@ function AnalysisResult({ result, onReset }: { result: ScanResult, onReset: () =
         </div>
       </div>
 
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-8 flex gap-8">
+      <div className="bg-white dark:bg-slate-900 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm p-8 flex gap-8">
         <img src={result.imageUrl} alt="Result" className="w-48 h-48 object-cover rounded-2xl shadow-md" />
         <div className="flex-1">
           <div className="flex items-center justify-between mb-2">
-            <span className="px-3 py-1 bg-green-50 text-green-600 text-xs font-bold uppercase rounded-full tracking-wider">Analysis Complete</span>
-            <span className="text-gray-400 text-sm">{new Date(result.createdAt).toLocaleDateString()}</span>
+            <span className="px-3 py-1 bg-green-50 dark:bg-green-950/30 text-green-600 dark:text-green-400 text-xs font-bold uppercase rounded-full tracking-wider">Analysis Complete</span>
+            <span className="text-gray-400 dark:text-slate-500 text-sm">{new Date(result.createdAt).toLocaleDateString()}</span>
           </div>
-          <h2 className="text-4xl font-bold text-gray-900 mb-1">{result.diseaseName}</h2>
+          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-1">{result.diseaseName}</h2>
           <div className="flex items-center gap-2 mb-6">
-            <div className="h-2 flex-1 max-w-xs bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-2 flex-1 max-w-xs bg-gray-100 dark:bg-slate-800 rounded-full overflow-hidden">
               <motion.div 
                 initial={{ width: 0 }}
                 animate={{ width: `${result.confidence * 100}%` }}
                 className={cn("h-full", result.confidence > 0.8 ? "bg-green-500" : "bg-yellow-500")}
               ></motion.div>
             </div>
-            <span className="text-sm font-bold text-gray-700">{(result.confidence * 100).toFixed(1)}% Confidence</span>
+            <span className="text-sm font-bold text-gray-700 dark:text-slate-300">{(result.confidence * 100).toFixed(1)}% Confidence</span>
           </div>
-          <p className="text-gray-600 leading-relaxed italic">"{result.aiExplanation}"</p>
+          <p className="text-gray-600 dark:text-slate-300 leading-relaxed italic">"{result.aiExplanation}"</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-          <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm">
+          <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
             <AlertCircle size={20} className="text-orange-500" />
             Symptoms
           </h3>
           <ul className="space-y-2">
             {result.symptoms.map((s, i) => (
-              <li key={i} className="flex items-start gap-2 text-gray-600">
-                <ChevronRight size={18} className="text-blue-500 mt-0.5" />
+              <li key={i} className="flex items-start gap-2 text-gray-600 dark:text-slate-300">
+                <ChevronRight size={18} className="text-indigo-500 dark:text-indigo-400 mt-0.5" />
                 {s}
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
-          <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
-            <Info size={20} className="text-blue-500" />
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm">
+          <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
+            <Info size={20} className="text-indigo-500" />
             Precautions
           </h3>
           <ul className="space-y-2">
             {result.precautions.map((p, i) => (
-              <li key={i} className="flex items-start gap-2 text-gray-600">
+              <li key={i} className="flex items-start gap-2 text-gray-600 dark:text-slate-300">
                 <CheckCircle2 size={18} className="text-green-500 mt-0.5" />
                 {p}
               </li>
@@ -256,12 +230,12 @@ function AnalysisResult({ result, onReset }: { result: ScanResult, onReset: () =
           </ul>
         </div>
 
-        <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm md:col-span-2">
-          <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm md:col-span-2">
+          <h3 className="font-bold text-lg mb-4 flex items-center gap-2 text-gray-900 dark:text-white">
             <FileText size={20} className="text-indigo-500" />
             Potential Causes
           </h3>
-          <p className="text-gray-600 leading-relaxed">
+          <p className="text-gray-600 dark:text-slate-300 leading-relaxed">
             {result.causes && result.causes.length > 0 
               ? result.causes.join(", ") 
               : "Common triggers include environmental factors, genetics, or lifestyle habits."}
@@ -269,29 +243,29 @@ function AnalysisResult({ result, onReset }: { result: ScanResult, onReset: () =
         </div>
       </div>
 
-      <div className="bg-slate-900 rounded-3xl p-8 text-white shadow-xl shadow-slate-200">
+      <div className="bg-slate-900 dark:bg-slate-800 rounded-3xl p-8 text-white shadow-xl shadow-slate-200 dark:shadow-none">
         <h3 className="text-xl font-bold mb-4">Suggested Treatment Plan</h3>
-        <p className="text-slate-50 opacity-90 leading-relaxed mb-6">{result.treatment}</p>
+        <p className="text-slate-50 dark:text-slate-300 opacity-90 leading-relaxed mb-6">{result.treatment}</p>
         <div className="bg-white/10 p-4 rounded-xl border border-white/20">
           <p className="text-sm font-medium flex items-center gap-2">
             <AlertCircle size={16} />
             Medical Disclaimer
           </p>
-          <p className="text-xs text-slate-100 mt-1">This analysis is for informational purposes only. Please consult a licensed dermatologist before starting any medical treatment.</p>
+          <p className="text-xs text-slate-100 dark:text-slate-400 mt-1">This analysis is for informational purposes only. Please consult a licensed dermatologist before starting any medical treatment.</p>
         </div>
       </div>
 
       <div className="flex gap-4 print:hidden">
         <button 
           onClick={() => window.print()}
-          className="flex-1 py-4 rounded-2xl bg-white border border-gray-100 text-gray-900 font-semibold hover:bg-gray-50 transition-all flex items-center justify-center gap-2"
+          className="flex-1 py-4 rounded-2xl bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 text-gray-900 dark:text-white font-semibold hover:bg-gray-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
         >
           <FileText size={20} />
           Export as PDF
         </button>
         <button 
           onClick={onReset}
-          className="flex-1 py-4 rounded-2xl bg-gray-900 text-white font-semibold hover:bg-black transition-all"
+          className="flex-1 py-4 rounded-2xl bg-gray-900 dark:bg-indigo-600 text-white font-semibold hover:bg-black dark:hover:bg-indigo-700 transition-all"
         >
           Conduct Another Scan
         </button>
