@@ -1,4 +1,5 @@
 import express from "express";
+import { execSync } from "child_process";
 import path from "path";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type, HarmCategory, HarmBlockThreshold } from "@google/genai";
@@ -40,6 +41,15 @@ const GROQ_CHAT_MODEL = "llama-3.3-70b-versatile";
 const SYSTEM_INSTRUCTION = "You are an advanced dermatological analysis assistant. Examine the provided image and identify any potential skin condition, disease, or abnormality present. Your analysis should be comprehensive and cover any dermatological category. Pay special attention to how conditions present on diverse skin tones to ensure accuracy across all backgrounds. Provide an objective description of what you observe. IMPORTANT: This analysis is for informational and educational tracking purposes only and is not a clinical diagnosis. Respond ONLY with a valid JSON object matching this schema: { \"diseaseName\": string, \"confidence\": number (0.0 to 1.0), \"symptoms\": string[], \"causes\": string[], \"precautions\": string[], \"treatment\": string, \"aiExplanation\": string }. Do not include any pre-amble or post-amble text.";
 
 async function startServer() {
+  // Ensure database tables exist (critical for Render/production deploys)
+  try {
+    console.log("Initializing database...");
+    execSync("npx prisma generate && npx prisma db push --skip-generate", { stdio: "inherit" });
+    console.log("Database ready!");
+  } catch (e) {
+    console.error("Database init warning:", e);
+  }
+
   const app = express();
   const PORT = parseInt(process.env.PORT || "3000", 10);
 
