@@ -152,13 +152,6 @@ dermavision-ai/
 |--------|----------|-------------|
 | POST | `/api/analyze-skin` | Analyze skin image |
 | POST | `/api/chat` | Chat with AI assistant |
-
-## 👤 Admin Access
-
-To access the admin dashboard, create an account with:
-- **Email:** `admin@dermavision.com`
-- **Password:** Any password (6+ characters)
-
 ## 📄 License
 
 This project is for educational and demonstration purposes.
